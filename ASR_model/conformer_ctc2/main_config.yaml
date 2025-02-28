@@ -1,0 +1,5 @@
+---
+Current_experiment:
+    config_filename: "tsn_nchlt_training.yaml"  ## path to the hyperparameter config file for this experiment. Note that pathing starts inside "/configs/" by default
+    description: "Train a Setswana model using NCHLT_tsn speech corpus"  ## Short description to describe the purpose of this experiment. This is for logging purposes only
+...

@@ -1,0 +1,13 @@
+module add chpc/cuda/9.1 chpc/build-essentials/gnu_0.1 chpc/openmpi/2.0.0/gcc-6.2.0_java-1.8.0_73 chpc/atlas/3.10.3/gcc-6.1.0 
+export KALDI_ROOT=/apps/chpc/asr/kaldi_gpu
+export KALDI_ROOT_OLD=/apps/chpc/asr/kaldi/
+
+export LD_LIBRARY_PATH=$KALDI_ROOT/tools/openfst-1.6.7/lib:$LD_LIBRARY_PATH
+
+export CPLUS_INCLUDE_PATH=$KALDI_ROOT/tools/openfst-1.6.7/include:$CPLUS_INCLUDE_PATH
+
+source $KALDI_ROOT/tools/config/common_path.sh
+
+export PATH=$PWD/utils/:$KALDI_ROOT/src/bin:$KALDI_ROOT_OLD/tools/openfst/bin:$KALDI_ROOT_OLD/tools/openfst/lib:$KALDI_ROOT/src/fstbin/:$KALDI_ROOT/src/gmmbin/:$KALDI_ROOT/src/featbin/:$KALDI_ROOT/src/lm/:$KALDI_ROOT/src/sgmmbin/:$KALDI_ROOT/src/sgmm2bin/:$KALDI_ROOT/src/fgmmbin/:$KALDI_ROOT/src/latbin/:$KALDI_ROOT/src/nnetbin:$KALDI_ROOT/src/nnet2bin/:$KALDI_ROOT/src/nnet3bin/:$KALDI_ROOT/src/online2bin/:$KALDI_ROOT/src/ivectorbin/:$KALDI_ROOT/src/lmbin/:$KALDI_ROOT/src/chainbin/:$PWD:$PATH:$KALDI_ROOT/tools/sph2pipe_v2.5
+
+export PATH=/apps/chpc/asr/sox/bin:$PATH
