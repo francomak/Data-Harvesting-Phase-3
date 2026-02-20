@@ -23,7 +23,7 @@ At a high level:
 
 Tools for scoring `.tra` label files using dynamic programming.
 
-- `score_tras.py`
+- `score_tras.py`   
   Compares two `.tra` files (e.g. reference vs. hypothesis), where each line has the form:
 
   ```text
@@ -38,7 +38,7 @@ Tools for scoring `.tra` label files using dynamic programming.
   python3 score_tras.py <tra_file_1> <tra_file_2> > scores.txt
   ```
 
-- `dpScores.py`
+- `dpScores.py`   
   Additional DP‑based scoring utilities (see the script itself for details).
 
 See `DP_scoring/README.md` for the low‑level format and usage.
@@ -49,17 +49,17 @@ See `DP_scoring/README.md` for the low‑level format and usage.
 
 Utilities to run inference (decoding) on audio files.
 
-- `inference_with_filenames_list.py`
+- `inference_with_filenames_list.py`    
   Runs an ASR model over a list of filenames. Typical workflow:
   - Prepare a text file listing audio segment names or paths.
   - Configure paths/model settings at the top of the script (or via config).
   - Run the script to generate hypotheses for each segment.
 
-- `vosk_decode/`
+- `vosk_decode/`    
   Simple inference using Vosk models.
-  - `vosk_decode.py`
+  - `vosk_decode.py`    
     A wrapper around Vosk to decode audio.
-  - `README.md`
+  - `README.md`   
     Short instructions on how to run this script and where to get models.
 
 ---
