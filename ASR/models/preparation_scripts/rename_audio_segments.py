@@ -2,7 +2,7 @@
 
 import os
 
-audio_dir = "/media/franco_linux/CSIR/Datasets/Audio/Data_Harvesting/radio_news/ssw/iTranscribe/source_audio"
+audio_dir = "Datasets/Audio/Data_Harvesting/radio_news/ssw/iTranscribe/source_audio"
 bulletins = os.listdir(audio_dir)
 
 for bulletin in bulletins:

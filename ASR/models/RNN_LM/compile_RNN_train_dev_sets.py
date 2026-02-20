@@ -8,10 +8,6 @@ This script compiles all those textfiles together into a single file. It will sp
 import os
 import random
 
-# lang = 'tsn'
-# compilation_textfile_paths = ["/media/franco_linux/CSIR/Datasets/Text_corpus/tsn/nchlt_JB.txt",
-#                               "/media/franco_linux/CSIR/Datasets/Text_corpus/tsn/tsn_news_sentences_compilation.txt"]
-
 lang = 'zul'
 compilation_textfile_paths = ["/run/media/franco_linux/CSIR/Datasets/Text_corpus/zul/NCHLT_compilation.txt", 
                               "/run/media/franco_linux/CSIR/Datasets/Text_corpus/zul/zul_news_adaptation_sentence_compilation.txt",
@@ -21,20 +17,7 @@ training_compilation = []
 dev_compilation = []
 
 random.seed = 42
-### Corpus = News
-# 
-# news_filenames = os.listdir(NEWS_TRANS_DIR)
-# random.shuffle(news_filenames)
-# training_len = int(round(len(news_filenames)*0.9, 0))
-# for i, filename in enumerate(news_filenames):
-#     with open(f'{NEWS_TRANS_DIR}/{filename}') as file:
-#         transcription = file.read().strip()
-#         if i <= training_len:
-#             training_compilation.append(transcription)
-#         else:
-#             dev_compilation.append(transcription)
-
-def read_from_single_compilation_textfile(directory_paths):
+def read_from_compilation_textfile(directory_paths):
     for filename in directory_paths:
         with open(filename) as file:
             all_transcriptions = file.read().split('\n')
@@ -46,7 +29,7 @@ def read_from_single_compilation_textfile(directory_paths):
                 else:
                     dev_compilation.append(transcription)       
 
-read_from_single_compilation_textfile(compilation_textfile_paths)
+read_from_compilation_textfile(compilation_textfile_paths)
  
 with open(f'languages/{lang}/nchlt_news_leipzig/nchlt_news_leipzig_training_sentences.txt', 'w') as file:
     for sentence in training_compilation:

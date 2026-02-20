@@ -1,7 +1,7 @@
 """
 Context: 
 For radio broadcast news, we compiled a spreadsheet containing initial ASR predictions and sent it to an external transcription company (iTranscribe/Tuming-Lee) to manually verify and correct transcription errors. 
-The columns in the spreadsheet (from left to right): "bulletin", "filename", "duration", "flag", and "transcription"
+The columns in the spreadsheet (from left to right): "filename", "duration", "flag", and "transcription"
 Use this script to load data from the spreadsheet, remove bracket error tags, and save each segment's transcription into individual textfiles. There are also functions to create train/dev/test sets
 """
 
@@ -11,11 +11,11 @@ import string
 import random
 import shutil
 
-spreadsheet_file = '/run/media/franco_linux/CSIR/Datasets/Audio/Data_Harvesting/radio_news/nbl/adaptation_set/received_nbl_adaptation_set_ndebele.xlsx'
+spreadsheet_file = 'Datasets/Audio/Data_Harvesting/radio_news/nbl/adaptation_set/received_nbl_adaptation_set.xlsx'
 spreadsheet_column_names = ['bulletin', 'filename', 'duration', 'flag', 'transcription']
 
-output_transcriptions_dir = '/run/media/franco_linux/CSIR/Datasets/Audio/Data_Harvesting/radio_news/nbl/adaptation_set/transcriptions'  # Empty dir to save each individual segment's transcription
-output_list_dir = '/run/media/franco_linux/CSIR/Datasets/Audio/Data_Harvesting/radio_news/nbl/adaptation_set/lists' # Lists dir to save train/dev/test splits 
+output_transcriptions_dir = 'Datasets/Audio/Data_Harvesting/radio_news/nbl/adaptation_set/transcriptions'  # Empty dir to save each individual segment's transcription
+output_list_dir = 'Datasets/Audio/Data_Harvesting/radio_news/nbl/adaptation_set/lists' # Lists dir to save train/dev/test splits 
 lang = 'nbl'
 change_filename = True # Boolean value. True if filenaming convention needs to be updated to conform to previously used naming convention. See change_filenaming_convention function below for explanation
 
@@ -62,20 +62,16 @@ def remove_bracket_errors(df):
             for error in list_of_errors:
                 error_list.append([error, df['filename'][i], df['transcription'][i]])
                 if '+' in error:
-                    foreign_word = error.split('+')[1].strip() # foreign words are indicated with the following format: [foreign_eng + yes]
+                    foreign_word = error.split('+')[1].strip() # foreign words are indicated with the following format: [foreign_eng + president], so remove the rest and just keep 'president'
                     sentence = sentence.replace(error, foreign_word)  # replace the bracket error with the foreign word
-                else:
-                    sentence = sentence.replace(error, '')  # Replace error words without a plus (e.g. [?]) with a blank space to remove it from the sentence
+                # else:  ## No else needed. If the bracket error is [president], then leave it as is. The brackets would be removed later in the normalization 
+
         sentence = ' '.join(sentence.split())  # Remove any extra spaces that might have been introduced from replacing words above
 
         for word in sentence.split():  
             if '_' in word: 
                 word = word.replace('_', ' ') # replace underscores with a space so that t_v becomes t v 
             word = word.translate(str.maketrans('', '' , string.punctuation)) # Remove all punctuation
-            
-        if '_' in sentence: 
-            sentence = sentence.replace('_', ' ') # replace underscores with a space so that t_v becomes t v  
-        sentence = sentence.translate(str.maketrans('', '' , string.punctuation)) # Remove all punctuation
 
         error_free_flag_list.append(error_free_flag)  
         error_free_sentence_list.append(sentence)
@@ -160,7 +156,7 @@ def save_transcriptions_to_file(df):
 
 
 '''
-Run the extraction for adaptation set spreadsheets sent to iTranscribe for manual verification
+Run the extraction of adaptation set spreadsheet
 '''
 df = load_spreadsheet()
 df, error_list = remove_bracket_errors(df)
@@ -168,7 +164,7 @@ save_transcriptions_to_file(df)
 count_errors(df)
 save_errors_to_file(error_list)
 
-news_only_df = filter_by_flag(df, flag='N')
-output_lists = assign_train_dev_test_sets(news_only_df)
-save_lists(output_lists)
+# news_only_df = filter_by_flag(df, flag='N')
+# output_lists = assign_train_dev_test_sets(news_only_df)
+# save_lists(output_lists)
 

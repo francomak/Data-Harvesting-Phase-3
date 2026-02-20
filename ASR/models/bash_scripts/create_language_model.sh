@@ -6,7 +6,7 @@ set -Eeuo pipefail
 
 # Define input directory paths
 DATA_LANGUAGE="zul"
-DATA_TEXT_CORPUS_COMPILATION_FILE="/run/media/franco_linux/Data/Text/zul/zul_news_training_set_compilation.txt"  # A single textfile containing a compilation of text sentences for language model training
+DATA_TEXT_CORPUS_COMPILATION_FILE="Data/Text/zul/zul_news_training_set_compilation.txt"  # A single textfile containing a compilation of text sentences for language model training
 
 # Define output directory paths
 ## Below are related to language models

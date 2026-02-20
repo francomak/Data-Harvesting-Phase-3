@@ -7,9 +7,9 @@ import librosa
 import pandas as pd
 
 lang = "ssw"
-audio_dir = "/media/franco_linux/CSIR/Datasets/Audio/Data_Harvesting/radio_news/ssw/iTranscribe/source_audio"
-transcription_dir = "/media/franco_linux/CSIR/Datasets/Audio/Data_Harvesting/radio_news/ssw/iTranscribe/transcriptions"
-list_dir = "/media/franco_linux/CSIR/Datasets/Audio/Data_Harvesting/radio_news/ssw/iTranscribe/lists"
+audio_dir = "Datasets/Audio/Data_Harvesting/radio_news/ssw/iTranscribe/source_audio"
+transcription_dir = "Datasets/Audio/Data_Harvesting/radio_news/ssw/iTranscribe/transcriptions"
+list_dir = "Datasets/Audio/Data_Harvesting/radio_news/ssw/iTranscribe/lists"
 
 text_filenames = os.listdir(transcription_dir)
 segments = [x.split(".")[0] for x in text_filenames if len(x)>0]  # remove ".txt" from the filenames
