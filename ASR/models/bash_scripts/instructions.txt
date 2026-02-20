@@ -1,0 +1,5 @@
+1. Create the script
+2. Run the following to give it the necessary permission to execute:
+    chmod +x script_name.sh
+3. Run the script
+    bash script_name.sh

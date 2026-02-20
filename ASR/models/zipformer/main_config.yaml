@@ -1,0 +1,12 @@
+---
+Current_experiment:
+    config_filename: "2025/zulu_nchlt.yaml"
+    description: "Train a zipformer using only isiZulu NCHLT"
+    exp_output_folder: "/Kaldi_2/zipformer/monolingual/zul/NCHLT/exp_nchlt"
+
+
+### HISTORICAL LOGS BELOW:
+# Current_experiment:
+#     config_filename: "2025/zulu_nchlt.yaml"
+#     description: "Train a zipformer using isiZulu NCHLT"
+#     exp_output_folder: "/Kaldi_2/zipformer/monolingual/zul/NCHLT/exp_NHCLT"

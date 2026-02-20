@@ -1,0 +1,16 @@
+---
+Current_experiment:
+    config_filename: "example_config_multiple_cutsets.yaml"
+    description: "Manually input a description to keep as a log. When using multiple cutsets, do the following:
+                  1. Run Lhotse data preperation for each dataset separately so that you have a training cutset for each dataset independently
+                  2. Input both training cutset filenames into the config file under train_cuts and train_cuts_2
+                  3. Run the train_multiple_cutsets.py script for model training"
+
+### HISTORICAL LOGS BELOW:
+
+# Current_experiment:
+#     config_filename: "example_config_multiple_cutsets.yaml"
+#     description: "Manually input a description to keep as a log. When using multiple cutsets, do the following:
+#                   1. Run Lhotse data preperation for each dataset separately so that you have a training cutset for each dataset independently
+#                   2. Input both training cutset filenames into the config file under train_cuts and train_cuts_2
+#                   3. Run the train_multiple_cutsets.py script for model training"

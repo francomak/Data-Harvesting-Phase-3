@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+   <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+         <!-- XML Schema Generated from XML Document on Mon Oct 08 2018 11:16:09 GMT+0200 (SAST) -->
+         <!-- with XmlGrid.net Free Online Service http://xmlgrid.net -->
+         <xs:element name="corpus">
+               <xs:complexType>
+                     <xs:sequence>
+                           <xs:element name="speaker" maxOccurs="unbounded">
+                                 <xs:complexType>
+                                       <xs:sequence>
+                                             <xs:element name="recording" maxOccurs="unbounded">
+                                                   <xs:complexType>
+                                                         <xs:sequence>
+                                                               <xs:element name="transcript_word" type="xs:string"></xs:element>
+                                                               <xs:element name="transcript_ph" type="xs:string"></xs:element>
+                                                         </xs:sequence>
+                                                         <xs:attribute name="audio" type="xs:string"></xs:attribute>
+                                                         <xs:attribute name="md5sum" type="xs:string"></xs:attribute>
+                                                         <xs:attribute name="duration" type="xs:string"></xs:attribute>
+                                                         <xs:attribute name="confidence_score" type="xs:string"></xs:attribute>
+                                                         <xs:attribute name="recording_date" type="xs:string"></xs:attribute>
+                                                         <xs:attribute name="audio_format" type="xs:string"></xs:attribute>
+                                                   </xs:complexType>
+                                             </xs:element>
+                                       </xs:sequence>
+                                       <xs:attribute name="id" type="xs:string"></xs:attribute>
+                                       <xs:attribute name="gender" type="xs:string"></xs:attribute>
+                                 </xs:complexType>
+                           </xs:element>
+                     </xs:sequence>
+                     <xs:attribute name="name" type="xs:string"></xs:attribute>
+                     <xs:attribute name="language" type="xs:string"></xs:attribute>
+                     <xs:attribute name="source" type="xs:string"></xs:attribute>
+                     <xs:attribute name="genre" type="xs:string"></xs:attribute>
+               </xs:complexType>
+         </xs:element>
+   </xs:schema>

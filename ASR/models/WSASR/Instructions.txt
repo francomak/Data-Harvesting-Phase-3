@@ -1,0 +1,36 @@
+1. Copy "lexicon_both" from ngram_language_models/Zulu/lexicon_both.txt into multilingual/zul/data/lang_phone, and rename to "lexicon.txt". Manually add the following to the the lexicon
+!SIL	SIL
+<SPOKEN_NOISE>	SPN
+<UNK>	SPN
+2. Load "k2" virtual env, and set workdir to kaldi_2/multilingual/WSASR
+3. Run prepare_lang.py on the terminal and supply as input the language directory "lang_phone"
+    ./local/prepare_lang.py --lang-dir zul/data/lang_phone
+4. Run get_words_from_lexicon.py script
+    ./local/get_words_from_lexicon.py --lang-dir zul/data/lang_phone --otc-token "<star>"
+5. Manually create an empty folder called lang_bpe_500, and then copy "words.txt" from lang_phone into lang_bpe_500. Also locate a compilation of text sentences for bpe training. This file is found at: franco_linux/CSIR/Datasets/Text_corpus/zul/NCHLT_Leipzig_comp.txt. Copy it into lang_bpe_500
+    ./local/train_bpe_model.py --lang-dir zul/data/lang_bpe_500 --vocab-size 500 --transcript zul/data/lang_bpe_500/NCHLT_Leipzig_comp.txt
+
+    ./local/prepare_otc_lang_bpe.py --lang-dir zul/data/lang_bpe_500 --otc-token "<star>"
+
+    ./local/validate_bpe_lexicon.py --lexicon zul/data/lang_bpe_500/lexicon.txt --bpe-model zul/data/lang_bpe_500/bpe.model --otc-token "<star>"
+
+6. Manually create an "lm" folder, generate 3-gram and 4-gram arpa files, and then prepare G. To create the arpa files, split the text corpus into a train and test set using a 90%/10% split, respectively. Place both of these text files into the "lm" folder. An example script for this step is located here:
+"/home/franco_linux/Documents/CSIR/ASR/ASR_models/ngram_language_models/data_prep.ipynb"
+
+    cd zul/data/lm
+    irstlm tlm -tr="train_set_both.txt" -n=3 -lm=wb -te="test_set_both.txt" -o=both_3_gram.arpa
+    irstlm tlm -tr="train_set_both.txt" -n=4 -lm=wb -te="test_set_both.txt" -o=both_4_gram.arpa
+    cd ../../..
+
+    python3 -m kaldilm --read-symbol-table=zul/data/lang_phone/words.txt --disambig-symbol='#0' --max-order=3 zul/data/lm/both_3_gram.arpa > zul/data/lm/G_3_gram.fst.txt
+
+    python3 -m kaldilm --read-symbol-table=zul/data/lang_phone/words.txt --disambig-symbol='#0' --max-order=4 zul/data/lm/both_4_gram.arpa > zul/data/lm/G_4_gram.fst.txt
+
+7. Compile HLG
+    ./local/compile_hlg.py --lm-dir zul/data/lm --lang-dir zul/data/lang_bpe_500
+
+8. Obtain dataset features and train the model
+    cd ..   # wrkdir should be ASR_models/kaldi_2
+    python WSASR/Lhotse_data_preparation.py
+    python WSASR/train.py
+    python WSASR/get_avg_results.py

@@ -1,0 +1,40 @@
+# =============================================================================
+# Standard Corpus Configuration
+# =============================================================================
+# This configuration file defines how the corpus builder extracts metadata
+# and generates the XML output file.
+#
+# Usage:
+#   python build_corpus.py --config corpus_config.yaml
+# =============================================================================
+
+# Details of the corpus
+name: "sama_nbl"
+language: "nbl"
+source: "IkwekweziFM"
+genre: "studio_bulletins"
+
+# Recording metadata fields
+audio_format: "MP3_128_kb/s_bitrate"
+confidence_score: "-1"
+
+## Metadata source for the speech dataset. Specify where to obtain the audio and transcription metadata (specifically duration and transcription). There are two options:
+# Option 1: Get metadata from an Excel (.xlsx) file. Expected columns: filename, duration, transcription
+# Note: Option 1 is the default. Set to `null` to use Option 2 instead
+xlsx_file: "/path/to/verified_nbl_spreadsheet.xlsx" #
+
+# Option 2: Get metadata directly from source audio and text directories. Note that this is an alternative method to the xlsx file, and is skipped unless the `xlsx_file` variable above is set to `null`
+
+# Path to the directory containing audio files in speaker-specific subdirectories
+# Structure expected: audio_dir/<speaker_id>/<filename>.wav
+# NOTE: regardless of using Option 1 or Option 2, the `audio_dir` is still a required input to calculate audio file MD5 checksums
+audio_dir: "/path/to/nbl_audio_directory"
+# Path to the directory containing transcription files (one .txt per audio file)
+# Only used with Option 2
+text_dir: "/path/to/nbl_transcription_dir"
+
+# Output XML package name
+output_file: "sama_nbl.xml"
+
+# Output CSV metadata file (filename, duration, flag, transcription)
+csv_output_file: "sama_nbl.csv"

@@ -1,27 +1,92 @@
-# Data Harvesting Phase 3
+# Data harvesting, ASR, and packaging tools
 
-## Description
-This repository contains a collection of data harvesting tools for the creation of speech and text resources that would enable HLT development in South Africa. It covers both text and audio pre-processing steps required to create a speech corpus, and to train an ASR model. 
+This repository is a **work‑in‑progress collection of tools and scripts** used for:
 
-Broadly, the steps of the audio harvesting procedure are as follows:
+- **Data harvesting & data pre‑processing** for speech corpora.
+- **Automatic speech recognition (ASR)** experiments.
+- **Packaging** cleaned/annotated data into reusable corpus formats.
 
-1. Obtain raw recordings.
-2. Perform forced alignment on recordings using a Kaldi1 baseline model.
-3. Split recordings according to silence markers obtained in step 2.
-4. Perform word recognition of recordings split up in step 3.
-5. Filter final segments by performing PDP scoring of the phone labels of segments from step 3 with the phone labels from segments from step 4. Use a dictionary to lookup the phone labels for each word recognised for segments in step 4.
+This repository contains  the full pipeline from raw audio + transcripts → ASR models → packaged corpora.
 
-## Software components
-Below is a description of the inventory of software components that have been compiled in this repository. Consult the README(s) in each directory for further information.
+---
 
-* "ASR_model": Contains modified Conformer CTC 2 scripts obtained from the Kaldi 2 Icefall repository. These scripts are used for data preparation of a speech dataset, as well as training and decoding an ASR model.
-* "kaldi_segment_docker": Contains scripts for phone alignment, and phone and word recognition of audio using Kaldi. A dockerfile is provided containing Kaldi and other dependencies necessary for the scripts to run. 
-* "scoring": Implementation of a DP algorithm to compute audio segment scores comparing two sets of phone speech label sequences. The first set is from a phone decode using an ASR model, and the second set is a word decode, followed by conversion to phonetic tokens using a pronunciation dictionary.
-* "segment_on_silence": Given a .ctm file with Kaldi phone aligments create segment alignments for 5+ second segments given silences.
-* "textnorm_scripts": Text normalisation functionality to remove or transform unwanted character strings such as writing out of numbers into words and deletion of non-word markups and/or document headers from the text. 
-* "vosk_decode": Word recognition of input audio with word level labels using K1 models and Vosk configuration
+## Repository layout (top level)
 
-## Authors
+From the dh_gitlab root:
 
-* Jaco Badenhorst - jbadenhorst@csir.co.za
-* Franco Mak - fmak@csir.co.za
+- data/  
+  Data harvesting and text/audio processing scripts.
+- ASR/  
+  ASR experiments and tools: feature extraction for ASR, model training/decoding, inference, and scoring.
+- packaging/  
+  Tools to package dataset into an XML corpora with defined schemas and APIs.
+
+---
+
+## data/ – data preparation & text processing
+
+This directory collects tools for cleaning, normalising, and organising raw data before it enters ASR pipelines or corpora.
+
+Typical contents include:
+
+- convert_mp3_to_wav.py   
+  Convert source audio (recorded in `.mp3` format) to a consistent WAV format.
+
+- change_filenaming_convention_text.py      
+  Adjust or standardise filenaming conventions for text/audio so downstream tools can parse IDs reliably.
+
+- convert_spreadsheet_transcriptions_to_textfiles.py      
+  Save vendor‑supplied spreadsheets into plain text files with one file per segment.
+
+- text_cleaning_and_normalization.py and textnorm/    
+  Text‑cleaning and normalisation utilities (e.g. punctuation, casing, tokenisation rules for specific languages/projects).
+
+- segmentation/     
+  Uses silence detection in Kaldi 1 to segment a long piece of audio into multiple shorter segments
+
+- processed_outputs/      
+  Contains a compilation of training-set transcriptions for news datasets from each manually verified SAMA news corpora. This compilation file can be used as input data to augment language models without leaking our suggested validation and test sets transcriptions
+
+---
+
+## ASR/ – ASR tools and experiments
+
+This subdirectory contains ASR‑specific scripts and recipes, built on top of libraries such as Lhotse, K2/icefall, PyTorch, Vosk, etc.
+
+High‑level structure:
+
+- models/     
+  ASR model recipes, data preparation, training, and decoding:
+  - models/WSASR/ – weakly supervised ASR recipe from Icefall
+  - models/zipformer/ – Zipformer‑based ASR recipe from Icefall
+  - models/conformer_ctc2/ – Conformer CTC-based ASR recipe from Icefall
+  - models/RNN_LM/ – scripts to train an RNN-based language model
+  - models/bash_scripts/ – bash scripts to run the language modelling and ASR trainin pipelines
+
+- inference/      
+  Lightweight inference tools:
+  - Run ASR models on user-defined lists of filenames.
+  - Use Vosk for simpler decoding pipelines.
+
+- DP_scoring/     
+  Dynamic‑programming based scoring tools for `.tra` label files (e.g. comparing hypothesis vs. reference label sequences).
+
+---
+
+## packaging/ – corpus packaging and APIs
+
+This directory is for turning processed data into a structured corpus that can be shared.
+
+Typical components:
+
+- build_corpus.py     
+  Scripts/utilities to build a corpus from processed data (e.g. assembling metadata, transcripts, and audio into a coherent XML structure).
+
+- corpus_api.py    
+  An API layer generated by GenerateDS for interacting with the packed corpus (querying entries, metadata, etc.).
+
+- corpus_xml_structure.xsd 
+  XML schema definition for the corpus format (e.g. for radio news data).
+
+- corpus_config.yaml     
+  Example configuration file containing dataset-specific metadata (e.g. corpus name, source, genre and audio_format)

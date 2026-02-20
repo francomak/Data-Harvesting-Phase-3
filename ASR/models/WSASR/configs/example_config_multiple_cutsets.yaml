@@ -1,0 +1,53 @@
+---
+dataset:    # Description of training dataset. Mainly used in Lhotse_data_preparation.py
+    lang: "zul"
+    audio_dir: "path/to/zul/audio_dir"
+    transcription_dir: "path/to/zul/transcription_dir"
+    lists_dir: "path/to/zul/lists"
+    train_list: "train_set.txt"
+    dev_list: "dev_set.txt"
+    test_list: "test_set.txt"
+    gender_in_filename: "no"  # Choose between "yes" or "no". NCHLT speaker folders contain gender in the name, for example "nchlt_afr_001m_0003.wav", but broadcast news filenames do not
+    speaker_folders: "yes"  # Choose between "yes" or "no" for speaker/bulletin folders (i.e. 'yes' if audio is organized into sub-folders, and 'no' if all the audio is in a single folder)
+
+datamodule:
+    manifest_dir: "monolingual/zul/data"    # Path to directory with train/dev/test cuts
+    fbank_dir: "monolingual/zul/data/fbank"  # fbank folder to store audio features
+    lang_dir: "monolingual/zul/data/lang_bpe_500"     # The lang dir. It contains language related input files such as lexicon.txt
+    lm_dir: "monolingual/zul/data/lm"    # The n-gram LM dir. It should contain either G_4_gram.pt or G_4_gram.fst.txt
+
+    train_cuts: "dataset_A_train_cuts.jsonl" # Lhotse cutset containing training segments
+    train_cuts_2: "dataset_B_train_cuts.jsonl"  # Lhotse cutset of second training dataset
+    dev_cuts: "dev_cuts.jsonl"     # Lhotse cutset containing dev segments
+    test_cuts: "test_cuts.jsonl"   # Lhotse cutset containing test segments
+
+train:
+    exp_dir: "monolingual/zul/exp"  # Experiment folder to save epochs and tensorboard logs
+    start_epoch: 1              # Resume training from this epoch. It should be positive. If larger than 1, it will load checkpoint from exp-dir/epoch-{start_epoch-1}.pt
+    num_epochs: 30              # Number of epochs to train.
+    num_decoder_layers: 0       # Number of decoder layer of transformer decoder. Setting this to 0 will not create the decoder at all (pure CTC model)
+
+parameters:
+    attention_rate: 0           # The total loss is (1 -  att_rate) * ctc_loss + att_rate * att_loss
+    num_buckets: 30             # The number of buckets for the DynamicBucketingSampler (you might want to increase it for larger datasets)
+    num_workers: 4              # The number of training dataloader workers that collect the batches
+
+    # Parameters below are usually left on their default values:
+    feature-dim: 80             # Number of features extracted in feature extraction stage.last dimension of feature vector. 80 when using fbank features and 768 or 1024 whn using wave2vec
+    initial_lr: 0.003           # The initial learning rate. This value should not need to be changed.
+    lr_epochs: 6                # Number of epochs that affects how rapidly the learning rate decreases
+    max_duration: 100           # Maximum pooled recordings duration (seconds) in a single batch. You can reduce it if it causes CUDA OOM
+    use_fp16: False             # Whether to use half precision training
+
+decode:     # Parameters used in decode.py
+    epoch: 37                    # Specifies the checkpoint to use for decoding
+    average: 1                  # Number of checkpoints to average. Automatically select consecutive checkpoints before the checkpoint specified by --epoch
+    method: "1best"             # Available options are: ctc-decoding, ctc-greedy-search, 1best
+    use_averaged_model: False   # Whether to load averaged model. If True, it would decode with the averaged model over the epoch range from `epoch-avg` (excluded) to `epoch`
+    num_decoder_layers: 0       # Number of decoder layers of transformer decoder. Setting this to 0 will not create the decoder at all (pure CTC model)
+    output_filename: "cmd_outputs.txt" # "outputs_lm_translations_only.txt" # "varying_finetune_8h_outputs.txt" # Output filename containing terminal printouts during decode
+
+    # Other parameters:
+    num_paths: 100              # Number of paths for n-best based decoding method. Used only when "method" is: nbest, nbest-rescoring, attention-decoder, rnn-lm, and nbest-oracle
+    nbest_scale: 0.5            # The scale to be applied to `lattice.scores`. It's needed if you use any kinds of n-best based rescoring. Used only when "method" is one of the following values: nbest, nbest-rescoring, attention-decoder, rnn-lm, and nbest-oracle. A smaller value results in more unique paths.
+...

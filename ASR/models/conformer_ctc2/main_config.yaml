@@ -1,0 +1,6 @@
+---
+Current_experiment:
+    config_filename: "tsn_nchlt_pretraining.yaml"
+    description: "Baseline Setswana pretraining using full NCHLT_tsn"
+    exp_output_folder: "monolingual/tsn/exp_nchlt"
+...

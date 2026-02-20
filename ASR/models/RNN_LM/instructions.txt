@@ -1,0 +1,58 @@
+1. Prepare BPE
+Create a folder called lang_bpe_500. BPE model requires training sentences. Compile a list of sentences from text corpuses into a single textfile, and put it inside lang_bpe_500 folder (e.g. nchlt_leipzig_text.txt). The folder Documents/Datasets/Text_corpus contains a compilation of different Text Corpuses available. Manually copy/paste into a single file.
+Create a folder called lang_phone. Put the lexicon dictionary inside here, and run the script below to generate words.txt. Move/copy words.txt into lang_bpe_500.
+    ./prepare_lang.py --lang-dir zul/lang_phone
+
+Run the following scripts:
+    ./train_bpe_model.py --lang-dir zul/lang_bpe_500 --vocab-size 500 --transcript /media/franco_linux/CSIR/Datasets/Text_corpus/zul/NCHLT_Leipzig_comp.txt
+    ./prepare_lang_bpe.py --lang-dir zul/lang_bpe_500
+    ./validate_bpe_lexicon.py --lexicon zul/lang_bpe_500/lexicon.txt --bpe-model zul/lang_bpe_500/bpe.model
+    ./convert-k2-to-openfst.py --olabels aux_labels zul/lang_bpe_500/L.pt zul/lang_bpe_500/L.fst
+    ./convert-k2-to-openfst.py --olabels aux_labels zul/lang_bpe_500/L_disambig.pt zul/lang_bpe_500/L_disambig.fst
+
+2. Prepare training and dev sets for RNN LM training.
+Prepare training and dev textfiles for RNN LM training. This is a simple textfile containing training sentences. Each line should contain a complete sentence, and words should be separated by space. Open the custom script called "compile_RNN_train_dev_sets.py". Make the necessary edits, and then run that script to create training and dev textfiles containing compiled sentences.
+    python compile_RNN_train_dev_sets.py
+
+Below scripts will prepare the packed training data for the RNNLM (packed output will be called "RNNLM_training_data.pt"). We then sort the training data according to its sentence length.
+    ./prepare_lm_training_data.py \
+    --bpe-model /home/franco_linux/models/Language_models/ngram/languages/zul/nchlt_news_no_testset/lang_bpe_500/bpe.model \
+    --lm-data languages/zul/nchlt_only/nchlt_training_sentences.txt \
+    --lm-archive languages/zul/nchlt_only/RNNLM_training_data.pt
+
+    ./sort_lm_training_data.py \
+    --in-lm-data languages/zul/nchlt_only/RNNLM_training_data.pt \
+    --out-lm-data languages/zul/nchlt_only/sorted_RNNLM_training_data.pt \
+    --out-statistics languages/zul/nchlt_only/training_data_stats.txt
+
+Below scripts will repeat the above for the dev set:
+    ./prepare_lm_training_data.py \
+    --bpe-model /home/franco_linux/models/Language_models/ngram/languages/zul/nchlt_news_no_testset/lang_bpe_500/bpe.model \
+    --lm-data languages/zul/nchlt_only/nchlt_validation_sentences.txt \
+    --lm-archive languages/zul/nchlt_only/RNNLM_validation_data.pt
+
+    ./sort_lm_training_data.py \
+    --in-lm-data languages/zul/nchlt_only/RNNLM_validation_data.pt \
+    --out-lm-data languages/zul/nchlt_only/sorted_RNNLM_validation_data.pt \
+    --out-statistics languages/zul/nchlt_only/validation_data_stats.txt
+
+3. Inside the language folder, create a new folder to store exp epochs (e.g. rnn_exp_nchlt_news)
+
+4. Train RNN LM. NOTE: by default, the script uses half precision training. To use full precision, include "--use-fp16 False", but this led to OOM issues. Try again with larger VRAM
+    ./scripts/train.py \
+    --world-size 1 \
+    --exp-dir languages/zul/nchlt_only/exp \
+    --start-epoch 0 \
+    --num-epochs 40 \
+    --tie-weights 1 \
+    --embedding-dim 2048 \
+    --hidden-dim 2048 \
+    --num-layers 3 \
+    --batch-size 300 \
+    --lm-data languages/zul/nchlt_only/sorted_RNNLM_training_data.pt \
+    --lm-data-valid languages/zul/nchlt_only/sorted_RNNLM_validation_data.pt \
+    --vocab-size 501 \
+    --max-sent-len 200 \
+    --use-fp16 True
+
+### Note: vocab size is at 501, because the conformer ctc acoustic model is also trained on BPE LM of 500 tokens, but it has +1 for a blank token
