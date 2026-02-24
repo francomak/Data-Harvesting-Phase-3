@@ -1,8 +1,6 @@
 # ASR tools and experiments
 
-This repository is a work‑in‑progress collection of tools used for automatic speech recognition (ASR) experiments.
-
-It contains:
+This repository contains a collection of tools used for automatic speech recognition (ASR) experiments. These ASR recipe scripts were adapted from the Librispeech example recipes in the Icefall repository, available at: https://github.com/k2-fsa/icefall
 
 - **Data preparation scripts** for turning raw audio + transcripts into ASR‑ready datasets.
 - **Model recipes** (training, decoding, export) for several ASR architectures.
@@ -15,9 +13,9 @@ It contains:
 
 At a high level:
 
-- `DP_scoring/` – scoring tools for label files.
-- `inference/` – scripts to run ASR models on lists of audio files.
-- `models/` – model recipes, data prep, and helper scripts.
+- `DP_scoring/` – Scoring tools for label files.
+- `inference/` – Scripts to run ASR models on lists of audio files.
+- `models/` – Model recipes, data preparation, and helper scripts.
 
 ### `DP_scoring/`
 
@@ -29,7 +27,7 @@ Tools for scoring `.tra` label files using dynamic programming.
   ```text
   <key> <label1> <label2> ...
   ```
-
+  
   Mismatched entries are ignored with a warning; scores are written to standard output.
 
   Basic usage (from the `DP_scoring` directory):
@@ -41,7 +39,7 @@ Tools for scoring `.tra` label files using dynamic programming.
 - `dpScores.py`   
   Additional DP‑based scoring utilities (see the script itself for details).
 
-See `DP_scoring/README.md` for the low‑level format and usage.
+See `DP_scoring/README.md` for format and usage.
 
 ---
 
@@ -49,16 +47,18 @@ See `DP_scoring/README.md` for the low‑level format and usage.
 
 Utilities to run inference (decoding) on audio files.
 
-- `inference_with_filenames_list.py`    
+- `inference/inference_with_filenames_list.py`    
   Runs an ASR model over a list of filenames. Typical workflow:
-  - Prepare a text file listing audio segment names or paths.
-  - Configure paths/model settings at the top of the script (or via config).
-  - Run the script to generate hypotheses for each segment.
+  1. Prepare a text file listing audio segment names or paths.
+  2. Configure paths/model settings at the top of the script (or via config).
+  3. Run the script to generate hypotheses for each segment.
 
-- `vosk_decode/`    
+- `inference/vosk_decode/`    
+
   Simple inference using Vosk models.
   - `vosk_decode.py`    
     A wrapper around Vosk to decode audio.
+    
   - `README.md`   
     Short instructions on how to run this script and where to get models.
 
@@ -66,7 +66,7 @@ Utilities to run inference (decoding) on audio files.
 
 ### `models/`
 
-This directory holds most of the **recipe‑style ASR code**: data preparation, model training, decoding, and export.
+This directory holds most of the recipe‑style ASR code: data preparation, model training, decoding, and export.
 
 Subdirectories include:
 
@@ -87,7 +87,7 @@ Dataset‑specific pre‑processing to get from raw audio + spreadsheets to trai
     - Ensure segments have both audio and text.
     - Randomly shuffle and split according to duration targets (e.g. 30 min validation, 30 min test, remaining into train).
 
-If you are preparing a new dataset, start by reading `models/preparation_scripts/Readme.txt` and then adapt these scripts (mainly paths and any dataset‑specific naming conventions).
+If you are preparing a new dataset, start by reading `models/preparation_scripts/README.md` and then adapt these scripts (mainly paths and any dataset‑specific naming conventions).
 
 ---
 
@@ -100,7 +100,7 @@ Key components:
 - `Lhotse_data_preparation.py`, `Lhotse_data_preparation_mixed_datasets.py`
   - Turn train/dev/test lists into:
     - Lhotse `RecordingSet` / `SupervisionSet` manifests.
-    - `CutSet`s with fbank features precomputed and stored on disk.
+    - `CutSet` with fbank features precomputed and stored on disk.
 
 - `asr_datamodule.py`, `asr_datamodule_multiple_cutsets.py`
   - Data loading / batching logic (bucketing samplers, SpecAugment, etc).
@@ -245,4 +245,4 @@ For now:
 - Check the **imports at the top of each script** to see what is required.
 - Use your existing ASR environment, or create a new one and install the required packages.
 
-A more systematic list of dependencies / environment files may be added later.
+A more systematic list of dependencies and environment files may be added later.

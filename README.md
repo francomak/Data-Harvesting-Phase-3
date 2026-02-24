@@ -1,12 +1,12 @@
 # Data harvesting, ASR, and packaging tools
 
-This repository is a collection of tools and scripts used for:
+This repository is a collection of tools and scripts developed during the Data Harvesting Phase 3 project, and contains:
 
-- **Data harvesting & data pre‑processing** for speech corpora.
-- **Automatic speech recognition (ASR)** experiments.
-- **Packaging** cleaned/annotated data into reusable corpus formats.
+- **Data harvesting & data pre‑processing** scripts for speech corpora.
+- **Automatic speech recognition (ASR)** recipes adapted from the [Icefall repository](https://github.com/k2-fsa/icefall).
+- **Packaging** tools for converting cleaned/annotated data into reusable corpus formats.
 
-This repository contains  the full pipeline from raw audio + transcripts → ASR models → packaged corpora.
+This repository contains the full pipeline from raw audio + transcripts → ASR models → packaged corpora.
 
 ---
 
@@ -14,11 +14,13 @@ This repository contains  the full pipeline from raw audio + transcripts → ASR
 
 From the dh_gitlab root:
 
-- data/   
+- `data/`   
   Data harvesting and text/audio processing scripts.
-- ASR/    
+  
+- `ASR/`    
   ASR experiments and tools: feature extraction for ASR, model training/decoding, inference, and scoring.
-- packaging/    
+  
+- `packaging/`    
   Tools to package dataset into an XML corpora with defined schemas and APIs.
 
 ---
@@ -29,23 +31,23 @@ This directory collects tools for cleaning, normalising, and organising raw data
 
 Typical contents include:
 
-- convert_mp3_to_wav.py   
+- `convert_mp3_to_wav.py`   
   Convert source audio (recorded in `.mp3` format) to a consistent WAV format.
 
-- change_filenaming_convention_text.    
+- `change_filenaming_convention_text.py`    
   Adjust or standardise filenaming conventions for text/audio so downstream tools can parse IDs reliably.
 
-- convert_spreadsheet_transcriptions_to_textfiles.py    
-  Save vendor‑supplied spreadsheets into plain text files with one file per segment.
+- `convert_spreadsheet_transcriptions_to_textfiles.py`    
+  Saves the content in transcript spreadsheets verified by external transcription companies into plain text files with one file per segment.
 
-- text_cleaning_and_normalization.py and textnorm/    
+- `text_cleaning_and_normalization.py` and `data/textnorm/`    
   Text‑cleaning and normalisation utilities (e.g. punctuation, casing, tokenisation rules for specific languages/projects).
 
-- segmentation/   
-  Uses silence detection in Kaldi 1 to segment a long piece of audio into multiple shorter segments
+- `data/segmentation/`   
+  Uses silence detection in Kaldi 1 to segment a long piece of audio into multiple shorter segments.
 
-- processed_outputs/    
-  Contains a compilation of training-set transcriptions for news datasets from each manually verified SAMA news corpora. This compilation file can be used as input data to augment language models without leaking our suggested validation and test sets transcriptions
+- `data/processed_outputs/`    
+  Each SAMA news corpus contains at least 10 hours of manually verified transcriptions that were organized into validation (~30 min), test (~30 min) and training sets (all remaining segments). This directory contains a compilation of training-set transcriptions from each SAMA corpus. This file can be used as input data to augment language models and excludes all transcripts from the suggested SAMA validation and test set transcriptions.
 
 ---
 
@@ -55,20 +57,20 @@ This subdirectory contains ASR‑specific scripts and recipes, built on top of l
 
 High‑level structure:
 
-- models/   
+- `ASR/models/`   
   ASR model recipes, data preparation, training, and decoding:
-  - models/WSASR/ – weakly supervised ASR recipe from Icefall
-  - models/zipformer/ – Zipformer‑based ASR recipe from Icefall
-  - models/conformer_ctc2/ – Conformer CTC-based ASR recipe from Icefall
-  - models/RNN_LM/ – scripts to train an RNN-based language model
-  - models/bash_scripts/ – bash scripts to run the language modelling and ASR trainin pipelines
+  - `ASR/models/WSASR/` – Weakly supervised ASR recipe from Icefall
+  - `ASR/models/zipformer/` – Zipformer‑based ASR recipe from Icefall
+  - `ASR/models/conformer_ctc2/` – Conformer CTC-based ASR recipe from Icefall
+  - `ASR/models/RNN_LM/` – Scripts to train an RNN-based language model
+  - `ASR/models/bash_scripts/` – Bash scripts to run the language modelling and ASR trainin pipelines
 
-- inference/    
+- `ASR/inference/`    
   Lightweight inference tools:
   - Run ASR models on user-defined lists of filenames.
   - Use Vosk for simpler decoding pipelines.
 
-- DP_scoring/   
+- `ASR/DP_scoring/`   
   Dynamic‑programming based scoring tools for `.tra` label files (e.g. comparing hypothesis vs. reference label sequences).
 
 ---
@@ -79,14 +81,14 @@ This directory is for turning processed data into a structured corpus that can b
 
 Typical components:
 
-- build_corpus.py   
-  Scripts/utilities to build a corpus from processed data (e.g. assembling metadata, transcripts, and audio into a coherent XML structure).
+- `build_corpus.py`   
+  Scripts & utilities to build a corpus from processed data (e.g. assembling metadata, transcripts, and audio into a coherent XML structure).
 
-- corpus_api.py   
+- `corpus_api.py`   
   An API layer generated by GenerateDS for interacting with the packed corpus (querying entries, metadata, etc.).
 
-- corpus_xml_structure.xsd    
+- `corpus_xml_structure.xsd`    
   XML schema definition for the corpus format (e.g. for radio news data).
 
-- corpus_config.yaml    
+- `corpus_config.yaml`    
   Example configuration file containing dataset-specific metadata (e.g. corpus name, source, genre and audio_format)
