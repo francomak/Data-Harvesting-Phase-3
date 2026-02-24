@@ -19,8 +19,9 @@ This script does not accept user inputs into the terminal. Instead, open up the 
 
 - create_train_dev_test_lists.py    
 This script creates train, dev and test lists that contain filenames for segments assigned to each set. This script will only consider segments that have corresponding sentences in the transcription folder. The methodology is as follows:   
-    a) import all transcription segments into a pandas dataframe    
-    b) get corresponding audio duration     
-    c) randomly shuffle the order of rows   
-    d) calculate a cumulative total duration for each successive row    
-    e) allocate the first 30 min to the test set, which corresponds with a total cumulative duration of (30*60) seconds. Similarly, allocate the next 30 min to the dev set, and then all segments with a cumulative duration greater than 1 hour is assigned to the training set. This section of the code can be adjusted to create custom sets containing custom total durations by making changes to the cut-off points
+
+    1) import all transcription segments into a pandas dataframe    
+    2) get corresponding audio duration     
+    3) randomly shuffle the order of rows   
+    4) calculate a cumulative total duration for each successive row    
+    5) allocate the first 30 min to the test set, which corresponds with a total cumulative duration of (30*60) seconds. Similarly, allocate the next 30 min to the dev set, and then all segments with a cumulative duration greater than 1 hour is assigned to the training set. This section of the code can be adjusted to create custom sets containing custom total durations by making changes to the cut-off points
